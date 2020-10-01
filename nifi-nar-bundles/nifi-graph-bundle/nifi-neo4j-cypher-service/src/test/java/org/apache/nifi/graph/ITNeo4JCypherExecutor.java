@@ -16,23 +16,23 @@
  */
 package org.apache.nifi.graph;
 
-import org.apache.nifi.util.TestRunner;
-import org.apache.nifi.util.TestRunners;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.neo4j.driver.v1.AuthTokens;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.GraphDatabase;
-import org.neo4j.driver.v1.Session;
-import org.neo4j.driver.v1.StatementResult;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import org.apache.nifi.util.TestRunner;
+import org.apache.nifi.util.TestRunners;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.neo4j.driver.AuthTokens;
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.GraphDatabase;
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Session;
 
 /**
  * Neo4J Cypher integration tests.  Please set the neo4j url, user and password according to your setup.
@@ -59,12 +59,12 @@ public class ITNeo4JCypherExecutor {
         driver = GraphDatabase.driver(neo4jUrl, AuthTokens.basic(user, password));
         executeSession("match (n) detach delete n");
 
-        StatementResult result = executeSession("match (n) return n");
+        Result result = executeSession("match (n) return n");
 
         assertEquals("nodes should be equal", 0, result.list().size());
     }
 
-    protected StatementResult executeSession(String statement) {
+    protected Result executeSession(String statement) {
         try (Session session = driver.session()) {
             return session.run(statement);
         }
